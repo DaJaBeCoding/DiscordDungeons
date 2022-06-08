@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="Phaser/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+
+    <script>
+    var config = {
+        type: Phaser.AUTO,
+        width: 2000,
+        height: 1000,
+        backgroundColor: '#ffffff',
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 200 }
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.setBaseURL('Game');
+
+        this.load.spritesheet('woman', 'images/woman.png', {frameWidth:100, frameHeight:100});
+    }
+
+    function create ()
+    {
+        const squeeze = {
+            key: 'squeeze',
+            frames: this.anims.generateFrameNumbers('woman', { frames: [ 0, 1, 2] }),
+            frameRate: 10,
+            repeat: false
+        };
+        const release = {
+            key: 'release',
+            frames: this.anims.generateFrameNumbers('woman', { frames: [ 2, 1, 0] }),
+            frameRate: 10,
+            repeat: false
+        };
+        const walk = {
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('woman', { frames: [ 4,5,6,7,8,9,10,11,12,13]}),
+            frameRate: 10,
+            repeat: -1
+        };
+        this.anims.create(squeeze);
+        this.anims.create(release);
+        this.anims.create(walk);
+
+        this.tasten = this.input.keyboard.createCursorKeys();
+
+        var woman = this.physics.add.sprite(400, 300, 'woman');
+        woman.displayWidth = 500;
+        woman.displayHeight = 500;
+        woman.body.setAllowGravity(false);
+
+
+        this.input.keyboard.on('keydown-SPACE', function() {
+            woman.play('squeeze');
+        });
+        this.input.keyboard.on('keyup-SPACE', function() {
+            woman.play('release');
+        });
+        this.input.keyboard.on('keydown-RIGHT', function() {
+            woman.scaleX = -1 * Math.abs(woman.scaleX);
+            woman.scakeY = -1 * Math.abs(woman.scaleY); 
+            woman.play('walk');
+            woman.body.setVelocityX(250);
+        });
+        this.input.keyboard.on('keyup-RIGHT', function() {
+            woman.stop();
+            woman.setFrame(0);
+            woman.body.setVelocityX(0);
+        });
+        this.input.keyboard.on('keydown-LEFT', function() {
+            woman.scaleX = Math.abs(woman.scaleX);
+            woman.scakeY = Math.abs(woman.scaleY); 
+            woman.play('walk');
+            woman.body.setVelocityX(-250);
+        });
+        this.input.keyboard.on('keyup-LEFT', function() {
+            woman.stop();
+            woman.setFrame(0);
+            woman.body.setVelocityX(0);
+        });
+/*
+        var particles = this.add.particles('red');
+
+        var emitter = particles.createEmitter({
+            speed: 100,
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        });
+
+        var logo = this.physics.add.image(400, 100, 'logo');
+
+        logo.setVelocity(100, 200);
+        logo.setBounce(1, 1);
+        logo.setCollideWorldBounds(true);
+
+        emitter.startFollow(logo);
+        */
+    }
+
+
+    </script>
+
+</body>
+</html>
